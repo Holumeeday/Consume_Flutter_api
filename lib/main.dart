@@ -40,9 +40,15 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  dynamic postData; // dynamic value to store the data from api
+  getData() async {
+    var apiResponse = await GetApiData.getPosts();
+    postData = apiResponse;
+  }
+
   @override
   void initState() {
-    getPosts();
+    getData();
     super.initState();
   }
 
@@ -53,10 +59,9 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: FutureBuilder<dynamic>(
-        future: getPosts(),
+        future: GetApiData.getPosts(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            Post posts = snapshot.data as Post;
             return ListView.separated(
               itemCount: snapshot.data.length,
               separatorBuilder: (context, index) {
@@ -67,10 +72,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               itemBuilder: (context, index) {
-                final post = Post.posts[index];
+                final post =
+                    postData[index]; // you can either use this (without model)
+
+                // initializing the model
+                PostModel postModel = PostModel(
+                    // or use this (The model data)
+                    userId: postData[index]['userId'],
+                    id: postData[index]['id'],
+                    title: postData[index]['title'],
+                    body: postData[index]['body']);
+
                 return ListTile(
-                  title: Text(post.title),
-                  subtitle: Text(post.body),
+                  title: Text(post["title"]), // this is without model
+                  subtitle: Text(postModel
+                      .body), // this is from the model, you can use any
                 );
               },
             );

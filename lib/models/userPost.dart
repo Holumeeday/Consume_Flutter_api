@@ -1,33 +1,37 @@
-class Post {
-  int userId;
-  int id;
-  String title;
-  String body;
+import 'dart:convert';
 
-  Post({
+// created a model for list of Json data that is returned from the API
+
+List<PostModel> postModelFromJson(String str) =>
+    List<PostModel>.from(json.decode(str).map((x) => PostModel.fromJson(x)));
+
+String postModelToJson(List<PostModel> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+class PostModel {
+  PostModel({
     required this.userId,
     required this.id,
     required this.title,
     required this.body,
   });
 
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
-      body: json['body'],
-    );
-  }
-}
+  int userId;
+  int id;
+  String title;
+  String body;
 
-class Posts {
-  List<Post> posts;
-  Posts({required this.posts});
+  factory PostModel.fromJson(Map<String, dynamic> json) => PostModel(
+        userId: json["userId"],
+        id: json["id"],
+        title: json["title"],
+        body: json["body"],
+      );
 
-  factory Posts.fromJson(List<dynamic> jsonList) {
-    final List<Post> postsList =
-    jsonList.map((post) => Post.fromJson(post)).toList();
-    return Posts(posts: postsList);
-  }
+  Map<String, dynamic> toJson() => {
+        "userId": userId,
+        "id": id,
+        "title": title,
+        "body": body,
+      };
 }
